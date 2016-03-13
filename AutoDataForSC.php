@@ -29,8 +29,8 @@ The script is designed to be run by cron daily at 16:59
         //  Get the required external files
         require_once '../nbbrota/config.nbbperiods.inc';     // sets period names
         require_once '../nbbrota/config.nbbshifttypes.inc';    // sets shift types
-        require_once '../contxt/mrbs_dbconnect.inc';        // set dbconnect strings
-        require_once '../contxt/quadrapps.inc';             // set environment strings
+        require_once '../nbbcontxt/mrbs_dbconnect.inc';        // set dbconnect strings
+        require_once '../nbbcontxt/quadrapps.inc';             // set environment strings
         //
         //  Get the configuration for this routine
         require_once './AutoDataForSC.ini';                 // default params & constants
@@ -118,6 +118,11 @@ The script is designed to be run by cron daily at 16:59
                                                 // other CONSTANTS from ini file
         $mail->addAddress(MAILTO);              // Add a recipient
         $mail->addBCC(MAILBCC);                 // Add hidden recipient
+        if (MADENV === "production"){
+            $mail->addBCC(MAILBCC2);                // Add hidden recipient if defined
+            $mail->addCC(MAILBCC3);                // Add hidden recipient if defined
+        }
+        
         $mail->Subject = MAILSUBJECT;           // Add subject
         $mail->Body    = $msgtxt;
 
