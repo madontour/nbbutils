@@ -119,7 +119,7 @@ The script is designed to be run by cron daily at 16:59
         $mail->addAddress(MAILTO);              // Add a recipient
         $mail->addBCC(MAILBCC);                 // Add hidden recipient
         $mail->addBCC(MAILBCC2);                // Add hidden recipient if defined
-        $mail->addCC(MAILBCC3);                // Add hidden recipient if defined
+        $mail->addBCC(MAILBCC3);                // Add hidden recipient if defined
         
         
         $mail->Subject = MAILSUBJECT;           // Add subject
