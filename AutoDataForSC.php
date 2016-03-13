@@ -16,8 +16,6 @@ The script is designed to be run by cron daily at 16:59
         <style>
             td {text-align:center}
         </style>
-}
-</style>
     </head>
     <body>
          <?php
