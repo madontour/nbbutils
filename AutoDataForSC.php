@@ -116,7 +116,7 @@ The script is designed to be run by cron daily at 16:59
                                                 // other CONSTANTS from ini file
         $mail->addAddress(MAILTO);              // Add a recipient
         $mail->addBCC(MAILBCC);                 // Add hidden recipient
-        $mail->addBCC(MAILBCC2);                // Add hidden recipient if defined
+        $mail->addCC(MAILBCC2);                // Add hidden recipient if defined
         $mail->addBCC(MAILBCC3);                // Add hidden recipient if defined
         
         
