@@ -75,12 +75,12 @@ see <http://www.gnu.org/licenses/>.
             trigger_error('Database connection failed: '  . $conn->connect_error, E_USER_ERROR);
         }
     // Get record set
-        $sql='SELECT users_roles.rid, users_roles.uid, users.status
-                FROM users_roles
-                INNER JOIN users
-                ON users_roles.uid=users.uid 
-                WHERE users.status=TRUE and users_roles.rid IN (5,11,12,15)
-                ORDER BY users_roles.uid';
+        $myShiftTypes = "'A','C','F','G','I'";
+        $sql="SELECT max(start_time),mrbs_entry.name, type, mrbs_users.uid 
+                FROM mrbs_entry 
+                JOIN mrbs_users ON mrbs_entry.name = mrbs_users.name
+                WHERE type IN(". myShiftTypes.")
+                GROUP BY mrbs_entry.name";
         $rs=$conn->query($sql);                                 // create record set
  
         if($rs === false) {
