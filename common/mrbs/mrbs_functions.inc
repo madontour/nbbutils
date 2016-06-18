@@ -31,19 +31,45 @@
         }
 //==============================================================================
         function GetShiftType($fshiftltr){
-            switch ($fshiftltr) {
-                case "I":
-                    $fshifttype = 'Mixed';
-                    break;
-                case "A":
-                    $fshifttype = 'Car';
-                    break;
-                case "E":
-                    $fshifttype = 'Bike';
-                    break;
-                default:
-                    $fshifttype = 'Coordinator';
+            global $vocab_override;
+            $mykey = "type.".$fshiftltr;
+            $myindex = strpos("ABCDEFGHI",$fshiftltr);
+            if ($myindex < 9){
+                $fshifttype = $vocab_override["en"][$mykey];
+            } else {
+                $fshifttype = "Unknown";
             }
+//            switch ($fshiftltr) {
+//                case "A":
+//                    $fshifttype = $vocab_override["en"]["type.A"];
+//                    break;
+//                case "B":
+//                    $fshifttype = $vocab_override["en"]["type.B"];
+//                    break;
+//                case "C":
+//                    $fshifttype = $vocab_override["en"]["type.C"];
+//                    break;
+//                case "D":
+//                    $fshifttype = $vocab_override["en"]["type.D"];
+//                    break;
+//                case "E":
+//                    $fshifttype = $vocab_override["en"]["type.E"];
+//                    break;
+//                case "F":
+//                    $fshifttype = $vocab_override["en"]["type.F"];
+//                    break;
+//                case "G":
+//                    $fshifttype = $vocab_override["en"]["type.G"];
+//                    break;
+//                case "H":
+//                    $fshifttype = $vocab_override["en"]["type.H"];
+//                    break;
+//                case "I":
+//                    $fshifttype = $vocab_override["en"]["type.I"];
+//                    break;
+//                default:
+//                    $fshifttype = 'Unknown';
+//            }
          return $fshifttype;
         }
 //==============================================================================
@@ -65,7 +91,26 @@
             
             return $retval;
         }
-        
+//==============================================================================
+        function GetMobileFromDescription($fstr){
+              $retval = " - ";
+              if (strlen($fstr) >0):
+                $needle ='Mobile Num';
+                $fpos=strpos($fstr,$needle);
+                $fpos2 =strpos($fstr,'Locality');
+                if ($fpos2 !==false):
+                  $fstrlen = $fpos2 - $fpos - 13;
+                else:
+                  $fstrlen = 14;
+                endif;
+                if ($fpos !== false):
+                  $retval= substr($fstr,$fpos+12,$fstrlen);
+                endif;    
+              endif;
+            
+            return $retval;
+        }
+                
 //==============================================================================
         function DLookup($fld, $tab, $whr)
         {

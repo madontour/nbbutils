@@ -14,4 +14,4 @@ $mail->Username = 'robot@northumbriabloodbikes.org.uk';
 $mail->Password = 'mtROBOTpwd';
 $mail->isHTML(true);                        // Set email format to HTML
 $mail->From = 'robot@northumbriabloodbikes.org.uk';
-$mail->FromName = 'NBB Rota Manager';
+$mail->FromName = 'NBB Rota Assistant';
