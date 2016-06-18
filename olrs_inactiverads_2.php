@@ -81,7 +81,8 @@ see <http://www.gnu.org/licenses/>.
         if ($conn->connect_error) {
             trigger_error('Database connection failed: '  . $conn->connect_error, E_USER_ERROR);
         }
-    // Get record set
+    // Get and process Record set 1    
+    //<editor-fold> Get record set 1
         $myShiftTypes = SHIFTTYPESINCLUDED;
         $sql="SELECT max(start_time),mrbs_entry.name, type, mrbs_users.uid, mrbs_users.mobile, mrbs_users.email
                 FROM mrbs_entry 
@@ -103,16 +104,8 @@ see <http://www.gnu.org/licenses/>.
             PrintTableHeader(4);
             PrintTableRow1();
         }
-        
- /* ==================================================================================
-    
-    Rows retrieved from MRBS
-    Now prepare the web Page
-  
-    ==================================================================================
-  */
-
-    //  now process the drupal recordset
+          
+         // Rows retrieved from MRBS  Now process the rows
         
         $rs->data_seek(0);                                                  // go to start of record set
         while($row = $rs->fetch_assoc()){                                   // iterate over record set
@@ -137,11 +130,14 @@ see <http://www.gnu.org/licenses/>.
             }    
               
         }
+    //</editor-fold>  End of record set 1
+        
         PrintTableFooter();
         echo "<br> Number of members listed ~ ".$NumInactiveRads; 
-        echo '<br><br>Run this reportt threshold of: '
+        echo '<br><br>Run this report with a threshold of: '
         . '<a href="./olrs_inactiverads_2.php?days=30">30 days</a>  &nbsp &nbsp'
         . '<a href="./olrs_inactiverads_2.php?days=60">60 days</a> &nbsp &nbsp'
+        . '<a href="./olrs_inactiverads_2.php?days=90">90 days</a> &nbsp &nbsp'        
         . '<a href="./olrs_inactiverads_2.php?days=120">120 days</a> &nbsp &nbsp'
         . '<a href="./olrs_inactiverads_2.php?days=180">180 days</a>';        
         echo '<br><br><a href="./olrs_inactiverads_3.php?days='.$threshold.'"> Or click to download this table</a>';

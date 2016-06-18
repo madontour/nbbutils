@@ -92,7 +92,7 @@
             return $retval;
         }
 //==============================================================================
-        function GetMobileFromDescription($fstr){
+   function GetMobileFromDescription($fstr){
               $retval = " - ";
               if (strlen($fstr) >0):
                 $needle ='Mobile Num';
@@ -109,8 +109,7 @@
               endif;
             
             return $retval;
-        }
-                
+        }    
 //==============================================================================
         function DLookup($fld, $tab, $whr)
         {
