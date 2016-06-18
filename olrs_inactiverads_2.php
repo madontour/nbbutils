@@ -138,8 +138,13 @@ see <http://www.gnu.org/licenses/>.
               
         }
         PrintTableFooter();
-        echo "<br> Number of members listed ~ ".$NumInactiveRads;
-        echo '<br><a href="./olrs_inactiverads_3.php"> Click to download this table</a>';
+        echo "<br> Number of members listed ~ ".$NumInactiveRads; 
+        echo '<br><br>Run this reportt threshold of: '
+        . '<a href="./olrs_inactiverads_2.php?days=30">30 days</a>  &nbsp &nbsp'
+        . '<a href="./olrs_inactiverads_2.php?days=60">60 days</a> &nbsp &nbsp'
+        . '<a href="./olrs_inactiverads_2.php?days=120">120 days</a> &nbsp &nbsp'
+        . '<a href="./olrs_inactiverads_2.php?days=180">180 days</a>';        
+        echo '<br><br><a href="./olrs_inactiverads_3.php?days='.$threshold.'"> Or click to download this table</a>';
         die("<br> all done - script ended");
          
  /* ==================================================================================
