@@ -199,7 +199,7 @@ function FormatMobileNum($num){
      }
      
 }  
-function array_to_csv_download($array, $filename = "OARS_export.csv", $delimiter=",") {
+function array_to_csv_download($array, $filename = "OLRS_export.csv", $delimiter=",") {
     header('Content-Type: application/csv');
     header('Content-Disposition: attachment; filename="'.$filename.'";');
 
