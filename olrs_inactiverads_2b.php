@@ -24,9 +24,8 @@ see <http://www.gnu.org/licenses/>.
     but have not done a shift in x days (where x is defined in ini file) 
 
     06/06/2016  MT  First Version Prepared
-    19/06/2016  MT  V2.0    Merge threshold selection with No shifts ever
-                            Add selection of thresholds
-                            Add ability to download via inactiverads_d.php
+
+        To add : capture num of days from URL.
 
 -->
 <html>
@@ -99,7 +98,7 @@ see <http://www.gnu.org/licenses/>.
         }
         // echo 'Num of Rows '.$rows_returned.'<br>';
         if ($rows_returned > 0){
-            echo "<strong>Report of NBB Riders and Drivers with no recorded shifts ".
+            echo "<strong>Report of NBB Riders and Drivers with no recorded shifts <br>".
                     "in the last ". $threshold . " days ~ ".
                     "i.e. since " . date("j, F, Y ",$StartSecs). "</strong> <br><br>";
             PrintTableHeader(4);
@@ -114,7 +113,11 @@ see <http://www.gnu.org/licenses/>.
             $myStartTime=$row['max(start_time)'];
  
             if ($myStartTime<$StartSecs)  {  
-         
+                unset($vars);
+                $vars[] = ucwords($myUserName);
+                $vars[] = $row['mobile'];
+                $vars[] = strtolower($row['email']);
+                $vars[] = date("j, F, Y ",$myStartTime);
                 if (is_bool(strpos($myUserName,'~')))  {  
                     unset($vars);
                     $vars[] = ucwords($myUserName);
@@ -124,49 +127,10 @@ see <http://www.gnu.org/licenses/>.
                     PrintTableRow(4,$vars);
                     $NumInactiveRads +=1; 
                 }
-            }          
-        }
-    //</editor-fold>  End of record set 1
-     
-        
-    // Get and process record set 2  - never booked a shift
-    //<editor-fold> Record set 2
-        
-        $sql="SELECT u.name, u.registers, u.mobile, u.email FROM mrbs_users u " . 
-             " WHERE u.name NOT IN " .
-             " (SELECT e.name from mrbs_entry e " . 
-             " WHERE e.type IN (" . $myShiftTypes. ")) " . 
-             " AND (LOCATE('R',u.registers)>0 OR LOCATE('D',u.registers)>0)" .
-             " ORDER BY u.name";
-                
-        $rs=$conn->query($sql);                                 // create record set
- 
-        if($rs === false) {
-            trigger_error('Wrong SQL: ' . $sql . ' Error: ' . $conn->error, E_USER_ERROR);
-        } else {
-            $rows_returned = $rs->num_rows;
-        }
-        
-    //Rows retrieved from MRBS Now process the records 
-        
-        $rs->data_seek(0);                                                  // go to start of record set
-        while($row = $rs->fetch_assoc()){                                   // iterate over record set
-            $myUserName=$row['name'];
-                                                                            //strpos returns num or false - but position
-                                                                            // will be zero so check for boolean
-            if (is_bool(strpos($myUserName,'~')))  {  
-                unset($vars);
-                    $vars[] = ucwords($myUserName);
-                    $vars[] = $row['mobile'];
-                    $vars[] = strtolower($row['email']);
-                    $vars[] = 'Never';
-                    PrintTableRow(4,$vars);
-                $NumInactiveRads +=1;   
             }    
               
         }
-        
-    //</editor-fold> End record set 2    
+    //</editor-fold>  End of record set 1
         
         PrintTableFooter();
         echo "<br> Number of members listed ~ ".$NumInactiveRads; 
@@ -176,7 +140,7 @@ see <http://www.gnu.org/licenses/>.
         . '<a href="./olrs_inactiverads_2.php?days=90">90 days</a> &nbsp &nbsp'        
         . '<a href="./olrs_inactiverads_2.php?days=120">120 days</a> &nbsp &nbsp'
         . '<a href="./olrs_inactiverads_2.php?days=180">180 days</a>';        
-        echo '<br><br>To download this table &nbsp <a href="./olrs_inactiverads_d.php?days='.$threshold.'"> Click Here</a><br>';
+        echo '<br><br><a href="./olrs_inactiverads_3.php?days='.$threshold.'"> Or click to download this table</a>';
         die("<br> all done - script ended");
          
  /* ==================================================================================

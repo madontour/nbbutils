@@ -39,7 +39,8 @@
         if ($conn->connect_error) {
             trigger_error('Database connection failed: '  . $conn->connect_error, E_USER_ERROR);
         }
-    // Get record set
+    // Get record set 1
+    //<editor-fold> 
         $myShiftTypes = SHIFTTYPESINCLUDED;
         $sql="SELECT max(start_time),mrbs_entry.name, type, mrbs_users.uid, mrbs_users.mobile, mrbs_users.email
                 FROM mrbs_entry 
@@ -55,7 +56,11 @@
         }
         // echo 'Num of Rows '.$rows_returned.'<br>';
         if ($rows_returned > 0){
-         
+            unset($vars);
+            $vars[] = array('Member', 
+                            'Mobile Num',
+                            'Email Address', 
+                            'Date of Last Shift');
         }
         
  /* ==================================================================================
@@ -83,7 +88,46 @@
             }    
               
         }
-        array_to_csv_download($vars);
+    //</editor-fold>    
+    // Get and process record set 2  - never booked a shift
+    //<editor-fold> Record set 2
+        
+        $sql="SELECT u.name, u.registers, u.mobile, u.email FROM mrbs_users u " . 
+             " WHERE u.name NOT IN " .
+             " (SELECT e.name from mrbs_entry e " . 
+             " WHERE e.type IN (" . $myShiftTypes. ")) " . 
+             " AND (LOCATE('R',u.registers)>0 OR LOCATE('D',u.registers)>0)" .
+             " ORDER BY u.name";
+                
+        $rs=$conn->query($sql);                                 // create record set
+ 
+        if($rs === false) {
+            trigger_error('Wrong SQL: ' . $sql . ' Error: ' . $conn->error, E_USER_ERROR);
+        } else {
+            $rows_returned = $rs->num_rows;
+        }
+        
+    //Rows retrieved from MRBS Now process the records 
+        
+        $rs->data_seek(0);                                                  // go to start of record set
+        while($row = $rs->fetch_assoc()){                                   // iterate over record set
+            $myUserName=$row['name'];
+                                                                            //strpos returns num or false - but position
+                                                                            // will be zero so check for boolean
+            if (is_bool(strpos($myUserName,'~')))  {  
+                $vars[] = array(ucwords($myUserName), 
+                                FormatMobileNum($row['mobile']),
+                                strtolower($row['email']), 
+                                'Never');
+                $NumInactiveRads +=1;   
+            }         
+        }
+        
+    //</editor-fold> End record set 2    
+        
+    //  Now send the file to download    
+        
+    array_to_csv_download($vars);
         
          
  /* ==================================================================================
