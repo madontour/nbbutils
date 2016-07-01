@@ -19,14 +19,12 @@ see <http://www.gnu.org/licenses/>.
 <!--
       olrs_inactiverads.php
 
-    This script checks the entries in the mrbs_entries table checking for riders
-    and drivers (rads) who are still active (ie they exist in the users table)
-    but have not done a shift in x days (where x is defined in ini file) 
+    This script checks the entries in the mrbs_entries table checking for 
+    shift controllers (scs)who are still active (ie they exist in the users table)
+    but have not done a shift in x days (where x is defined in the .ini file) 
 
     06/06/2016  MT  First Version Prepared
-    19/06/2016  MT  V2.0    Merge threshold selection with No shifts ever
-                            Add selection of thresholds
-                            Add ability to download via inactiverads_d.php
+    01/07/2016  MT  V2.0    from inactiverads.php
 
 -->
 <html>
@@ -45,7 +43,7 @@ see <http://www.gnu.org/licenses/>.
          <?php
         // set up variables for this machine or environment
         require_once '../nbbcontxt/quadrapps.inc';      // sets environment Variables
-        require_once './olrs_inactiverads.ini';         // sets constants
+        require_once './olrs_inactivescs.ini';         // sets constants
         
          
         // now set up lbraries - should be common for all machines and environments
@@ -171,12 +169,12 @@ see <http://www.gnu.org/licenses/>.
         PrintTableFooter();
         echo "<br> Number of members listed ~ ".$NumInactiveRads; 
         echo '<br><br>Run this report with a threshold of: '
-        . '<a href="./olrs_inactiverads_2.php?days=30">30 days</a>  &nbsp &nbsp'
-        . '<a href="./olrs_inactiverads_2.php?days=60">60 days</a> &nbsp &nbsp'
-        . '<a href="./olrs_inactiverads_2.php?days=90">90 days</a> &nbsp &nbsp'        
-        . '<a href="./olrs_inactiverads_2.php?days=120">120 days</a> &nbsp &nbsp'
-        . '<a href="./olrs_inactiverads_2.php?days=180">180 days</a>';        
-        echo '<br><br>To download this table &nbsp <a href="./olrs_inactiverads_d.php?days='.$threshold.'"> Click Here</a><br>';
+        . '<a href="./olrs_inactivescs.php?days=30">30 days</a>  &nbsp &nbsp'
+        . '<a href="./olrs_inactivescs.php?days=60">60 days</a> &nbsp &nbsp'
+        . '<a href="./olrs_inactivescs.php?days=90">90 days</a> &nbsp &nbsp'        
+        . '<a href="./olrs_inactivescs.php?days=120">120 days</a> &nbsp &nbsp'
+        . '<a href="./olrs_inactivescs.php?days=180">180 days</a>';        
+        echo '<br><br>To download this table &nbsp <a href="./olrs_inactivescs_d.php?days='.$threshold.'"> Click Here</a><br>';
         die("<br> all done - script ended");
          
  /* ==================================================================================
