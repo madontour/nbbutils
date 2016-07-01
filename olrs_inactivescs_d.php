@@ -42,11 +42,11 @@
     // Get record set 1
     //<editor-fold> 
         $myShiftTypes = SHIFTTYPESINCLUDED;
-        $sql="SELECT max(start_time),mrbs_entry.name, type, mrbs_users.uid, mrbs_users.mobile, mrbs_users.email
-                FROM mrbs_entry 
-                JOIN mrbs_users ON mrbs_entry.name = mrbs_users.name
-                WHERE type IN(". $myShiftTypes.")
-                GROUP BY mrbs_entry.name";
+        $sql="SELECT max(e.start_time),e.name, e.type, u.uid, u.mobile, u.email, u.registers
+                FROM mrbs_entry e 
+                JOIN mrbs_users u ON e.name = u.name
+                WHERE e.type IN(". $myShiftTypes.")
+                GROUP BY e.name";
         $rs=$conn->query($sql);                                 // create record set
  
         if($rs === false) {
@@ -76,9 +76,9 @@
         $rs->data_seek(0);                                                  // go to start of record set
         while($row = $rs->fetch_assoc()){                                   // iterate over record set
             $myUserName=$row['name'];
-            $myStartTime=$row['max(start_time)'];
+            $myStartTime=$row['max(e.start_time)'];
  
-            if ($myStartTime<$StartSecs)  {  
+            if ($myStartTime<$StartSecs AND strpos($row['registers'],'C')>0)  {  
                 
                 if (is_bool(strpos($myUserName,'~')))  { 
                     $vars[] = array(ucwords($myUserName), FormatMobileNum($row['mobile']),
