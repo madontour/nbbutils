@@ -75,12 +75,13 @@ see <http://www.gnu.org/licenses/>.
             trigger_error('Database connection failed: '  . $conn->connect_error, E_USER_ERROR);
         }
     // Get record set
-        $myShiftTypes = "'A','C','F','G','I'";
-        $sql="SELECT max(start_time),mrbs_entry.name, type, mrbs_users.uid 
-                FROM mrbs_entry 
-                JOIN mrbs_users ON mrbs_entry.name = mrbs_users.name
-                WHERE type IN(". myShiftTypes.")
-                GROUP BY mrbs_entry.name";
+        
+        $sql='SELECT r.rid, r.uid, u.status, u.mail
+                 FROM users_roles r
+                 INNER JOIN users u
+                 ON r.uid=u.uid 
+                 WHERE u.status=TRUE and r.rid IN (5,11,12,15)
+                 ORDER BY r.uid';
         $rs=$conn->query($sql);                                 // create record set
  
         if($rs === false) {
@@ -123,7 +124,9 @@ see <http://www.gnu.org/licenses/>.
                         $sqlu="UPDATE mrbs_users " .
                                 "SET registers = '" . $registers .
                                 "', lastupdate = " . $myTime .
-                                 " WHERE uid = " . $uid ;    
+                                ", email = '" . $mymail .
+                                 "' WHERE uid = " . $uid ;  
+                        echo $sqlu . '<br>';
                         $drupalroles[$uid]=$registers;
                         if ($conn2->query($sqlu) === TRUE) {
                             // echo "Record $uid updated successfully <br>";
@@ -133,20 +136,24 @@ see <http://www.gnu.org/licenses/>.
                     }
                     $uid = $myuid;                                          //  reset uid
                     $registers = role2char($myrid)  ;                       //  reset registers text    
-            }    
-            if ($uid<>0) {                                          //  process the last record
-                $sqlu="UPDATE mrbs_users " .
-                        "SET registers = '" . $registers .
-                        "', lastupdate = " . $myTime .
-                         " WHERE uid = " . $uid ;    
-                $drupalroles[$uid]=$registers;
-                if ($conn2->query($sqlu) === TRUE) {
-                    // echo "Record $uid updated successfully <br>";
-                } else {
-                    echo "Error updating record $uid: " . $conn2->error . "<br>";
-                }       
-            }  
+                    $mymail = $row['mail'];                                 //  reset email address
+            } 
         }
+        if ($uid<>0) {                                          //  process the last record
+            $sqlu="UPDATE mrbs_users " .
+                    "SET registers = '" . $registers .
+                    "', lastupdate = " . $myTime .
+                    ", email = '" . $mymail .
+                     "' WHERE uid = " . $uid ;  
+            echo $sqlu . '<br>';
+            $drupalroles[$uid]=$registers;
+            if ($conn2->query($sqlu) === TRUE) {
+                // echo "Record $uid updated successfully <br>";
+            } else {
+                echo "Error updating record $uid: " . $conn2->error . "<br>";
+            }       
+        }  
+        
         echo "all register updates done <br>";
   /* ==================================================================================
     
