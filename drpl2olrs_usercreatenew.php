@@ -161,10 +161,11 @@ see <http://www.gnu.org/licenses/>.
         
         $newusers = array_diff(array_unique($drupaluids), $olrsuids);
         echo "<br><strong> New users required</strong><br>";
+        unset($newuserslog);
         foreach($newusers as $newuid) {
             $knownexceptions = array(12,56);
             if (!in_array($newuid,$knownexceptions)){
-                $sql3 = "Select name FROM users WHERE uid = ". $newuid;
+                $sql3 = "Select name, mail FROM users WHERE uid = ". $newuid;
                 $rs3=$conn->query($sql3);                                 // create record set
                 if($rs3 === false) {
                     trigger_error('Wrong SQL: ' . $sql3 . ' Error: ' . $conn->error, E_USER_ERROR);
@@ -173,9 +174,23 @@ see <http://www.gnu.org/licenses/>.
                 }                 
                 $rs3->data_seek(0);                                                  // go to start of record set
                 $row = $rs3->fetch_assoc();
-                $newname = $row['name'];
+                $newname = strtolower($row['name']);
+                $newmail = strtolower($row['mail']);
+                $mypwd = str_replace("day", "d@y", date('l').date('d')); 
                 $myindex=$newuid;
-                echo "No OLRS record for $newuid , $newname roles are $drupalroles[$myindex] <br>";
+                $newuserslog[] = date("D d M Y H:i") . ", " . $newname . ", " . $newuid . ", " . 
+                                 $newmail.  ", " . $drupalroles[$myindex]; 
+                echo "No OLRS record for $newuid , $newname roles are $drupalroles[$myindex] <br>";      
+                $sqli4 = "Insert INTO mrbs_users " .
+                         "(name, level, password, uid, email, registers) ".
+                         " VALUES ('".$newname."', 1, '". md5($mypwd) . "', ". $newuid . ", '" .
+                                   $newmail . "', '" . $drupalroles[$myindex] . "')";
+                $rs4=$conn2->query($sqli4);                                 // create record set
+                if($rs4 === false) {
+                    trigger_error('Wrong SQL: ' . $sqli4. ' Error: ' . $conn2->error, E_USER_ERROR);
+                } else {
+                    $rows_returned = $rs->num_rows;
+                }       
             }
         }
         die("all done - script end");
