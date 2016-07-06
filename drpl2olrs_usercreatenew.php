@@ -178,18 +178,22 @@ see <http://www.gnu.org/licenses/>.
                 $newmail = strtolower($row['mail']);
                 $mypwd = str_replace("day", "d@y", date('l').date('d')); 
                 $myindex=$newuid;
+                $mymobile = GetMobileNum($newuid);
+                $mypostcode = strtoupper(GetPostCode($newuid));
                 $newuserslog[] = date("D d M Y H:i") . ", " . $newname . ", " . $newuid . ", " . 
                                  $newmail.  ", " . $drupalroles[$myindex]; 
                 echo "No OLRS record for $newuid , $newname roles are $drupalroles[$myindex] <br>";      
                 $sqli4 = "Insert INTO mrbs_users " .
-                         "(name, level, password, uid, email, registers) ".
+                         "(name, level, password, uid, email, registers, mobile, postcode) ".
                          " VALUES ('".$newname."', 1, '". md5($mypwd) . "', ". $newuid . ", '" .
-                                   $newmail . "', '" . $drupalroles[$myindex] . "')";
+                                   $newmail . "', '" . $drupalroles[$myindex] . "', '" .
+                                   $mymobile . "', '" . $mypostcode ."')";
                 $rs4=$conn2->query($sqli4);                                 // create record set
                 if($rs4 === false) {
                     trigger_error('Wrong SQL: ' . $sqli4. ' Error: ' . $conn2->error, E_USER_ERROR);
                 } else {
                     $rows_returned = $rs->num_rows;
+                    SendWelcomeEmail($newname, $mypwd, $newmail);
                 }       
             }
         }
@@ -223,7 +227,97 @@ function role2char($rolenum){
     
     return $role2char;
 }
+   function SendWelcomeEmail($fusername,$fpassword,$femail) {
     
+    $msgtext =  "Hello " . GetFirstName($fusername) ."<br><br>";                 // Creae the message text
+    $msgtext .= "A user account has been created for you in the Northumbria Blood " .
+                "Bikes On-Line Rostering System (OLRS)"."<br><br>";
+    $msgtext .= "Your username is " . $fusername."<br>";
+    $msgtext .= "Your password is " . $fpassword."<br><br>";
+    $msgtext .= "Please note that the username is all lower case with a single " .
+                "space between items."."<br><br>";
+    $msgtext .= "Your password should be entered exactly as displayed with Upper" .
+                "and loweer case letters, symbols and numbers";
+    $msgtext .= "This password will be different to your existing password for " .
+                "the Website/Forum. The user guide " .
+                "explains how to set your own password for OLRS and you should do " . 
+                "this as soon as possible."."<br><br>";
+    $msgtext .= "This is an automatically generated email and replies to it are not monitored. " .
+                "If you have questions or need help you will get the quickest " . 
+                "response by contacting the " . 
+                "Rostering team using their contact page on the website."."<br><br>";
+    $msgtext .= "Regards,<br>The OnLine Rostering Team"."<br><br>";
+    $msgtext .= "OLRS and the training materials can be accessed via the NBB Website at " .
+                "http://northumbriabloodbikes.org.uk/ops/rostering " . "<br>";
+    $msgtext .= "The rostering team can be contacted via their contact form " .
+                "http://northumbriabloodbikes.org.uk/contact/online_rostering_system " . "<br>";
+    
+        $femail = 'madontour@googlemail.com';                                   // DEBUG remove     
+        $mail = new PHPMailer();                                                // defaults to using php "mail()"
+        require_once './common/mrbs/mrbs_smtpconnect.inc';                      // set defaults for googlemail
+        $mail->addAddress($femail);                                             // Add a recipient
+        $mail->Subject = 'New Account Details for NBB OLRS';                    // Add subject
+        $mail->Body = $msgtext;                                                 // Add message text
+        if(!$mail->Send()) {                                                    // Send Mail
+            echo "Mailer Error: " . $mail->ErrorInfo;
+        } else {
+            echo "Message sent!";
+        }
+   }
+   function GetFirstName($fname){
+       $names = explode(" ",$fname);
+       return $names[0];
+   }
+   function GetMobileNum($fuid){
+        global $conn;
+        $fsql = "SELECT p.uid, f.field_profile_main_mobile_phone_value, p.changed " .
+                "FROM field_data_field_profile_main_mobile_phone f INNER JOIN profile p " .
+                "ON f.entity_id = p.pid " . 
+                "WHERE p.uid = " . $fuid . " " .
+                "ORDER BY p.changed DESC";  
+        $rsa=$conn->query($fsql);                                 // create record set
+ 
+        if($rsa === false) {
+            trigger_error('Wrong SQL: ' . $fsql . ' Error: ' . $conn->error, E_USER_ERROR);
+        } else {
+            $rows_returned = $rsa->num_rows;
+        }                 
+        if ($rows_returned == 0){
+            return "not known";
+        } else {  
+            $rsa->data_seek(0);                                                 // go to start of record set
+            $row = $rsa->fetch_assoc();                                         // get first record
+            $val = $row['field_profile_main_mobile_phone_value'];               // get value
+            unset($rsa);
+            return $val; 
+        }
+   }
+    function GetPostCode($fuid){
+        global $conn;
+        $fuid = 201;                                                                // DEBUG Remove
+        $fsql = "SELECT p.uid, f.field_profile_main_post_code_value, p.changed " .  // fields needed
+                "FROM field_data_field_profile_main_post_code f " .                 // from tables
+                "INNER JOIN profile p " .                                           // Joined
+                "ON f.entity_id = p.pid " .                                         // by uid
+                "WHERE p.uid = " . $fuid . " " .                                    // for this user
+                "ORDER BY p.changed DESC";                                          // most recent record first
+        $rsa=$conn->query($fsql);                                                   // create record set
+ 
+        if($rsa === false) {
+            trigger_error('Wrong SQL: ' . $fsql . ' Error: ' . $conn->error, E_USER_ERROR);
+        } else {
+            $rows_returned = $rsa->num_rows;
+        }                 
+        if ($rows_returned == 0){
+            return "not known";
+        } else {  
+            $rsa->data_seek(0);                                                 // go to start of record set
+            $row = $rsa->fetch_assoc();                                         // get first record - 
+            $val = $row['field_profile_main_post_code_value'];                 // get value 
+            unset($rsa);
+            return $val; 
+        }
+   }
 ?>
     </body>
 </html>
