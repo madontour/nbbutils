@@ -78,9 +78,9 @@
             $myUserName=$row['name'];
             $myStartTime=$row['max(e.start_time)'];
  
-            if ($myStartTime<$StartSecs AND strpos($row['registers'],'C')>0)  {  
+            if ($myStartTime<$StartSecs AND strpos($row['registers'],'C') !==  FALSE)  {  
                 
-                if (is_bool(strpos($myUserName,'~')))  { 
+                 if (strpos($myUserName,'~') === FALSE)  { 
                     $vars[] = array(ucwords($myUserName), FormatMobileNum($row['mobile']),
                          strtolower($row['email']), date("j F, Y ",$myStartTime));
                     $NumInactiveRads +=1; 
@@ -113,8 +113,8 @@
         while($row = $rs->fetch_assoc()){                                   // iterate over record set
             $myUserName=$row['name'];
                                                                             //strpos returns num or false - but position
-                                                                            // will be zero so check for boolean
-            if (is_bool(strpos($myUserName,'~')))  {  
+                                                                            // will be zero so check for FALSE
+            if (strpos($myUserName,'~') === FALSE)  {  
                 $vars[] = array(ucwords($myUserName), 
                                 FormatMobileNum($row['mobile']),
                                 strtolower($row['email']), 

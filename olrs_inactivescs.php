@@ -111,9 +111,9 @@ see <http://www.gnu.org/licenses/>.
             $myUserName=$row['name'];
             $myStartTime=$row['max(e.start_time)'];
 
-            if ($myStartTime<$StartSecs AND strpos($row['registers'],'C')>0){  
-         
-                if (is_bool(strpos($myUserName,'~')))  {  
+            if ($myStartTime<$StartSecs AND strpos($row['registers'],'C')!== FALSE){  
+      
+                if (strpos($myUserName,'~') === FALSE)  {  
                     unset($vars);
                     $vars[] = ucwords($myUserName);
                     $vars[] = $row['mobile'];
