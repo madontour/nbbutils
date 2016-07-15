@@ -24,9 +24,8 @@ see <http://www.gnu.org/licenses/>.
     but have not done a shift in x days (where x is defined in ini file) 
 
     06/06/2016  MT  First Version Prepared
-    19/06/2016  MT  V2.0    Merge threshold selection with No shifts ever
-                            Add selection of thresholds
-                            Add ability to download via inactiverads_d.php
+
+        To add : capture num of days from URL.
 
 -->
 <html>
@@ -82,8 +81,7 @@ see <http://www.gnu.org/licenses/>.
         if ($conn->connect_error) {
             trigger_error('Database connection failed: '  . $conn->connect_error, E_USER_ERROR);
         }
-    // Get and process Record set 1    
-    //<editor-fold> Get record set 1
+    // Get record set
         $myShiftTypes = SHIFTTYPESINCLUDED;
         $sql="SELECT max(start_time),mrbs_entry.name, type, mrbs_users.uid, mrbs_users.mobile, mrbs_users.email
                 FROM mrbs_entry 
@@ -99,14 +97,22 @@ see <http://www.gnu.org/licenses/>.
         }
         // echo 'Num of Rows '.$rows_returned.'<br>';
         if ($rows_returned > 0){
-            echo "<strong>Report of NBB Shift Controllers with no recorded shifts ".
+            echo "<strong>Report of NBB Riders and Drivers with no recorded shifts <br>".
                     "in the last ". $threshold . " days ~ ".
                     "i.e. since " . date("j, F, Y ",$StartSecs). "</strong> <br><br>";
             PrintTableHeader(4);
             PrintTableRow1();
         }
-          
-         // Rows retrieved from MRBS  Now process the rows
+        
+ /* ==================================================================================
+    
+    Rows retrieved from MRBS
+    Now prepare the web Page
+  
+    ==================================================================================
+  */
+
+    //  now process the drupal recordset
         
         $rs->data_seek(0);                                                  // go to start of record set
         while($row = $rs->fetch_assoc()){                                   // iterate over record set
@@ -114,68 +120,16 @@ see <http://www.gnu.org/licenses/>.
             $myStartTime=$row['max(start_time)'];
  
             if ($myStartTime<$StartSecs)  {  
-         
-                if (strpos($myUserName,'~') === FALSE)  {  
-                    unset($vars);
-                    $vars[] = ucwords($myUserName);
-                    $vars[] = $row['mobile'];
-                    $vars[] = strtolower($row['email']);
-                    $vars[] = date("j, F, Y ",$myStartTime);
-                    PrintTableRow(4,$vars);
+                if (is_bool(strpos($myUserName,'~')))  {  
+                    PrintTableRow(ucwords($myUserName), $row['mobile'],
+                            strtolower($row['email']), date("j, F, Y ",$myStartTime));
                     $NumInactiveRads +=1; 
                 }
-            }          
-        }
-    //</editor-fold>  End of record set 1
-     
-        
-    // Get and process record set 2  - user exist, Register is D or R but never booked a shift
-    //<editor-fold> Record set 2
-        
-        $sql="SELECT u.name, u.registers, u.mobile, u.email FROM mrbs_users u " . 
-             " WHERE u.name NOT IN " .
-             " (SELECT e.name from mrbs_entry e " . 
-             " WHERE e.type IN (" . $myShiftTypes. ")) " . 
-             " AND (LOCATE('R',u.registers)>0 OR LOCATE('D',u.registers)>0)" .
-             " ORDER BY u.name";
-                
-        $rs=$conn->query($sql);                                 // create record set
- 
-        if($rs === false) {
-            trigger_error('Wrong SQL: ' . $sql . ' Error: ' . $conn->error, E_USER_ERROR);
-        } else {
-            $rows_returned = $rs->num_rows;
-        }
-        
-    //Rows retrieved from MRBS Now process the records 
-        
-        $rs->data_seek(0);                                                  // go to start of record set
-        while($row = $rs->fetch_assoc()){                                   // iterate over record set
-            $myUserName=$row['name'];
-                                                                            //strpos returns num or false - but positio                                                                 // will be zero so check for boolean
-            if (strpos($myUserName,'~') === FALSE)  {  
-                unset($vars);
-                    $vars[] = ucwords($myUserName);
-                    $vars[] = $row['mobile'];
-                    $vars[] = strtolower($row['email']);
-                    $vars[] = 'Never';
-                    PrintTableRow(4,$vars);
-                $NumInactiveRads +=1;   
             }    
               
         }
-        
-    //</editor-fold> End record set 2    
-        
         PrintTableFooter();
-        echo "<br> Number of members listed ~ ".$NumInactiveRads; 
-        echo '<br><br>Run this report with a threshold of: '
-        . '<a href="./olrs_inactiverads_2.php?days=30">30 days</a>  &nbsp &nbsp'
-        . '<a href="./olrs_inactiverads_2.php?days=60">60 days</a> &nbsp &nbsp'
-        . '<a href="./olrs_inactiverads_2.php?days=90">90 days</a> &nbsp &nbsp'        
-        . '<a href="./olrs_inactiverads_2.php?days=120">120 days</a> &nbsp &nbsp'
-        . '<a href="./olrs_inactiverads_2.php?days=180">180 days</a>';        
-        echo '<br><br>To download this table &nbsp <a href="./olrs_inactiverads_d.php?days='.$threshold.'"> Click Here</a><br>';
+        echo "<br> Number of members listed ~ ".$NumInactiveRads;
         die("<br> all done - script ended");
          
  /* ==================================================================================
@@ -229,15 +183,14 @@ see <http://www.gnu.org/licenses/>.
                    "<td><strong>Last Shift</strong></td></tr>";
  }
  
- function PrintTableRow($numcols, $fvars)       
+ function PrintTableRow($mem, $mob, $ema, $cell4)       
  {
-     $str = "";
-     $str = $str . "<tr>" ;
-     foreach($fvars as $var){
-          $str = $str . "<td>" . $var . "</td>";
-     }
-     $str = $str ."</tr>";
-     echo $str;
+     echo "<tr>" .
+          "<td>" . $mem . "</td>".
+          "<td>" . $mob . "</td>".
+          "<td>" . $ema  ."</td>".
+          "<td>" . $cell4 . "</td>" .
+          "</tr>";
 }
 function PrintTableFooter()
 {
