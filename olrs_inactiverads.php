@@ -99,7 +99,7 @@ see <http://www.gnu.org/licenses/>.
         }
         // echo 'Num of Rows '.$rows_returned.'<br>';
         if ($rows_returned > 0){
-            echo "<strong>Report of NBB Shift Controllers with no recorded shifts ".
+            echo "<strong>Report of NBB Riders and Drivers with no recorded shifts ".
                     "in the last ". $threshold . " days ~ ".
                     "i.e. since " . date("j, F, Y ",$StartSecs). "</strong> <br><br>";
             PrintTableHeader(4);
