@@ -80,7 +80,7 @@
  
             if ($myStartTime<$StartSecs)  {  
                 
-                if (is_bool(strpos($myUserName,'~')))  { 
+                if (strpos($myUserName,'~') === FALSE)  { 
                     $vars[] = array(ucwords($myUserName), FormatMobileNum($row['mobile']),
                          strtolower($row['email']), date("j F, Y ",$myStartTime));
                     $NumInactiveRads +=1; 
@@ -114,7 +114,7 @@
             $myUserName=$row['name'];
                                                                             //strpos returns num or false - but position
                                                                             // will be zero so check for boolean
-            if (is_bool(strpos($myUserName,'~')))  {  
+            if (strpos($myUserName,'~') === FALSE)  {  
                 $vars[] = array(ucwords($myUserName), 
                                 FormatMobileNum($row['mobile']),
                                 strtolower($row['email']), 

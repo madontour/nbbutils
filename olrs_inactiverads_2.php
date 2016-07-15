@@ -115,7 +115,7 @@ see <http://www.gnu.org/licenses/>.
  
             if ($myStartTime<$StartSecs)  {  
          
-                if (is_bool(strpos($myUserName,'~')))  {  
+                if (strpos($myUserName,'~') === FALSE)  {  
                     unset($vars);
                     $vars[] = ucwords($myUserName);
                     $vars[] = $row['mobile'];
@@ -129,14 +129,14 @@ see <http://www.gnu.org/licenses/>.
     //</editor-fold>  End of record set 1
      
         
-    // Get and process record set 2  - never booked a shift
+    // Get and process record set 2  - user exist, Register is D or R but never booked a shift
     //<editor-fold> Record set 2
         
         $sql="SELECT u.name, u.registers, u.mobile, u.email FROM mrbs_users u " . 
              " WHERE u.name NOT IN " .
              " (SELECT e.name from mrbs_entry e " . 
              " WHERE e.type IN (" . $myShiftTypes. ")) " . 
-             " AND (LOCATE('C',u.registers)>0)" .
+             " AND (LOCATE('R',u.registers)>0 OR LOCATE('D',u.registers)>0)" .
              " ORDER BY u.name";
                 
         $rs=$conn->query($sql);                                 // create record set
@@ -152,9 +152,8 @@ see <http://www.gnu.org/licenses/>.
         $rs->data_seek(0);                                                  // go to start of record set
         while($row = $rs->fetch_assoc()){                                   // iterate over record set
             $myUserName=$row['name'];
-                                                                            //strpos returns num or false - but position
-                                                                            // will be zero so check for boolean
-            if (is_bool(strpos($myUserName,'~')))  {  
+                                                                            //strpos returns num or false - but positio                                                                 // will be zero so check for boolean
+            if (strpos($myUserName,'~') === FALSE)  {  
                 unset($vars);
                     $vars[] = ucwords($myUserName);
                     $vars[] = $row['mobile'];
