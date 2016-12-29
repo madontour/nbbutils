@@ -126,7 +126,7 @@
             //mysqli_free_result($result);            // Free result set
           }
 	  return $retval;
-          }
+         }
 //===============================================================================
         function GetAvailableShifts($ftype,$fdate) {
             //Takes in a string for type of shift D R C
@@ -313,7 +313,7 @@
                 $yr=date("Y",easter_date($fyear)); 
                 $mo=date("n",easter_date($fyear));
                 $da=date("j",easter_date($fyear));
-                $BHSecs=mktime(0, 0, 0, $mo, $da+1, $yr);      // for good friday
+                $BHSecs=mktime(0, 0, 0, $mo, $da+1, $yr);      // for Easter Monday is Easter Day + 1
                 if ($StartSecs === $BHSecs) {$isBH = TRUE;}
             endif;
             return $isBH;
