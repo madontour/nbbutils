@@ -27,12 +27,15 @@ function PrintTableHeader($numcols)
     echo '<table>';
      
     if($numcols>0){
+        PrintBlankRow($numcols);
         $cw = 1280 / $numcols;
         $str = "";
         foreach($fsizes as $var){
           $str = $str . '<col width="'. $var . '">';
         }
         echo $str;
+        PrintBlankRow($numcols);
+        
      }
  
  }

@@ -85,9 +85,9 @@ and open the template in the editor.
             $shiftdate = date('D j Y',$row['start_time'] );
             if ($startdate != $shiftdate){
                 $startdate = $shiftdate;
-                PrintBlankRow($numcols);
+                
                 PrintDividerRow($numcols);
-                PrintBlankRow($numcols);
+                
             }
             unset($vars);
                 $vars[] = $shiftdate;
