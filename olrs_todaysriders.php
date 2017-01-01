@@ -26,10 +26,7 @@ and open the template in the editor.
         #echo $da." ".$mo." ".$yr." ".$StartSecs." ".$EndSecs;
          
         // connect to the database
-        $DBServer = 'localhost'; 
-        $DBUser   = 'root';
-        $DBPass   = '';
-        $DBName   = 'nbb_rota';
+        require '../nbbcontxt/mrbs_dbconnect.inc';        // get db credentials
 
         $conn = new mysqli($DBServer, $DBUser, $DBPass, $DBName);
  
