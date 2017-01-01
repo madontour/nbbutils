@@ -20,8 +20,9 @@ and open the template in the editor.
         $yr=date("Y"); 
         $mo=date("n");
         $da=date("j");
-        $StartSecs=mktime(0, 0, 0, $mo, $da, $yr);
-        $EndSecs=mktime(0, 0, 0, $mo, $da+1, $yr);
+        $StartSecs=mktime(0, 0, 0, $mo, $da-1, $yr);
+        $EndSecs=mktime(0, 0, 0, $mo, $da+2, $yr);
+        $startdate = date('D j Y',$StartSecs);
         #echo $da." ".$mo." ".$yr." ".$StartSecs." ".$EndSecs;
          
         // connect to the database
@@ -36,6 +37,8 @@ and open the template in the editor.
         if ($conn->connect_error) {
             trigger_error('Database connection failed: '  . $conn->connect_error, E_USER_ERROR);
         }
+        
+        
         // Get record set
         $sql='SELECT start_time, name, type FROM mrbs_entry '
                 . 'WHERE (start_time >= '.$StartSecs. ' AND start_time <' . $EndSecs .') '
@@ -52,13 +55,15 @@ and open the template in the editor.
         // if rows returned then output headers
       
         if($rows_returned > 0) {
-            PrintTableHeader(4);
+            $numcols = 5;
+            PrintTableHeader($numcols);
             unset($vars);
+                $vars[] = "Date";
                 $vars[] = "shift";
                 $vars[] = "member";
                 $vars[] = "mobile";
                 $vars[] = "type";
-            PrintTableRow1(4,$vars);
+            PrintTableRow1($numcols,$vars);
         }
      
         #echo 'Num of Rows '.$rows_returned.'<br>';
@@ -69,12 +74,20 @@ and open the template in the editor.
             $membername = $row['name'];
             $shifttype = GetShiftType($row['type']);
             $mobnum = GetMobileFromMemberName($membername);
+            $shiftdate = date('D j Y',$row['start_time'] );
+            if ($startdate != $shiftdate){
+                $startdate = $shiftdate;
+                PrintBlankRow($numcols);
+                PrintDividerRow($numcols);
+                PrintBlankRow($numcols);
+            }
             unset($vars);
+                $vars[] = $shiftdate;
                 $vars[] = $shiftname;
                 $vars[] = $membername;
                 $vars[] = $mobnum;
                 $vars[] = $shifttype;
-            PrintTableRow(4,$vars);
+            PrintTableRow($numcols,$vars);
         }
         PrintTableFooter();
         

@@ -8,15 +8,18 @@
  */
 function PrintTableHeader($numcols)
  {
-     echo '<table style=width:"99%">';
-     if($numcols>0){
-        $cw = 100 / $numcols;
+    echo '<div style="overflow-x:auto;">'; 
+    echo '<table>';
+     
+    if($numcols>0){
+        $cw = 1280 / $numcols;
         $str = "";
-        for ($l=1; $l<5; $l++ ){
-            $str = $str . '<col width="'. $cw . '%">';
+        for ($l=1; $l<=$numcols; $l++ ){
+            $str = $str . '<col width="'. $cw .'">';
         }
         echo $str;
      }
+ 
  }
  function PrintTableRow1($numcols, $fvars)       
  {
@@ -41,5 +44,25 @@ function PrintTableHeader($numcols)
 }
 function PrintTableFooter()
 {
-     echo "</table><hr>";
+     echo "</table></div><hr>";
 }  
+function PrintBlankRow($numcols)       
+ {
+     $str = "";
+     $str = $str . "<tr>" ;
+    for ($l=1; $l<=$numcols; $l++ ){
+            $str = $str . "<td>" . ' ' . "</td>";
+        }
+     $str = $str ."</tr>";
+     echo $str;
+}
+function PrintDividerRow($numcols)       
+ {
+     $str = "";
+     $str = $str . "<tr>" ;
+    for ($l=1; $l<=$numcols; $l++ ){
+            $str = $str . "<td>" . '---' . "</td>";
+        }
+     $str = $str ."</tr>";
+     echo $str;
+}
