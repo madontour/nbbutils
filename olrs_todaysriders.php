@@ -56,13 +56,21 @@ and open the template in the editor.
       
         if($rows_returned > 0) {
             $numcols = 5;
-            PrintTableHeader($numcols);
+            
+            unset($vars);
+                $vars[] = 100;
+                $vars[] = "256";
+                $vars[] = "160";
+                $vars[] = "128";
+                $vars[] = "128";
+            PrintTableHeaderBespoke($numcols,$vars);
+            
             unset($vars);
                 $vars[] = "Date";
-                $vars[] = "shift";
-                $vars[] = "member";
-                $vars[] = "mobile";
-                $vars[] = "type";
+                $vars[] = "Shift Name";
+                $vars[] = "Member";
+                $vars[] = "Mobile Num";
+                $vars[] = "Shift Type";
             PrintTableRow1($numcols,$vars);
         }
      

@@ -21,6 +21,21 @@ function PrintTableHeader($numcols)
      }
  
  }
+ function PrintTableHeaderBespoke($numcols,$fsizes)
+ {
+    echo '<div style="overflow-x:auto;">'; 
+    echo '<table>';
+     
+    if($numcols>0){
+        $cw = 1280 / $numcols;
+        $str = "";
+        foreach($fsizes as $var){
+          $str = $str . '<col width="'. $var . '">';
+        }
+        echo $str;
+     }
+ 
+ }
  function PrintTableRow1($numcols, $fvars)       
  {
      $str = "";
