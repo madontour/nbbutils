@@ -22,7 +22,7 @@ and open the template in the editor.
         $da=date("j");
         $StartSecs=mktime(0, 0, 0, $mo, $da-1, $yr);
         $EndSecs=mktime(0, 0, 0, $mo, $da+2, $yr);
-        $startdate = date('D j Y',$StartSecs);
+        $startdate = date('D jS M',$StartSecs);
         #echo $da." ".$mo." ".$yr." ".$StartSecs." ".$EndSecs;
          
         // connect to the database
@@ -55,7 +55,7 @@ and open the template in the editor.
             $numcols = 5;
             
             unset($vars);
-                $vars[] = 100;
+                $vars[] = "110";
                 $vars[] = "256";
                 $vars[] = "160";
                 $vars[] = "128";
@@ -79,7 +79,7 @@ and open the template in the editor.
             $membername = $row['name'];
             $shifttype = GetShiftType($row['type']);
             $mobnum = GetMobileFromMemberName($membername);
-            $shiftdate = date('D j Y',$row['start_time'] );
+            $shiftdate = date('D jS M',$row['start_time'] );
             if ($startdate != $shiftdate){
                 $startdate = $shiftdate;
                 
