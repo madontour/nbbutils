@@ -68,47 +68,47 @@ The script is designed to be run by cron daily at 16:59
         } else {
             $rows_returned = $rs->num_rows;
         }
-        #echo 'Num of Rows '.$rows_returned.'<br>';
-        #iterate over record set after setting up table definition
-       
+        
+// prepare a mail object for later
+        $mail = new PHPMailer();                                // defaults to using php "mail()"
+        require_once './common/mrbs/mrbs_smtpconnect.inc';      // set defaults for googlemail     
+        
+// now iterate over records        
         $rs->data_seek(0);
         while($row = $rs->fetch_assoc()){
         
             $name = $row['name'];
             $emailad = GetEmailFromName($name);
             $salutation = GetSalutationFromName($name);
-        $msgtxt = "";    
-        $msgtxt = $msgtxt . "Hello ". $salutation . ",<br><br>";
-        $msgtxt = $msgtxt . "Your shift booked for " . date('D jS M Y',$row['start_time']) 
+            $msgtxt = "";    
+            $msgtxt = $msgtxt . "Hello ". $salutation . ",<br><br>";
+            $msgtxt = $msgtxt . "Your shift booked for " . date('D jS M Y',$row['start_time']) 
                   . " requires attention as the shift type may not be correct. <br><br> ";
-        $msgtxt = $msgtxt . "Regards, <br><br>";
-        $msgtxt = $msgtxt . "Steve";
-        echo $msgtxt. '<hr>';
+            $msgtxt = $msgtxt . "Regards, <br><br>";
+            $msgtxt = $msgtxt . "Steve";
+            echo $msgtxt. '<hr>';
         
         /* 
          * $msgtxt has the info
          * Now Create and Send Email
          */
  
-
-        $mail = new PHPMailer();                // defaults to using php "mail()"
-
-        require_once './common/mrbs/mrbs_smtpconnect.inc';    // set defaults for googlemail
-                                                // other CONSTANTS from ini file
          
        // $mail->addAddress($emailad);              // Add a recipient - ie the shift owner
        // $mail->addBCC(MAILBCC);                 // Add hidden recipient
        // $mail->addCC(MAILBCC2);                // Add hidden recipient if defined
        // $mail->addBCC(MAILBCC3);                // Add hidden recipient if defined
-        
+ 
         $mail->addAddress("michael.thompson@northumbriabloodbikes.org.uk");
         $mail->Subject = MAILSUBJECT;           // Add subject
-        $mail->Body    = $msgtxt;
+        $mail->msgHTML($msgtxt);
 
         if(!$mail->Send()) {
             echo "Mailer Error: " . $mail->ErrorInfo;
         } else {
             echo "Message sent!  <br>";
+            //sleep(10);
+            $mail->ClearAllRecipients(); 
         }
         }
         ?>
