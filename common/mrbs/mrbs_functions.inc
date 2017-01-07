@@ -91,6 +91,21 @@
             
             return $retval;
         }
+//=================================================================== 
+        function GetEmailFromName($fstr){
+              $retval = DLookup('email', 'mrbs_users', 'name = "'.$fstr.'"');            
+            return $retval;
+        }
+//=====================================================================        
+        function GetSalutationFromName($fstr){
+            $fpos=strpos($fstr," ");
+            if ($fpos !==false):
+                  $retval = substr($fstr,0,$fpos);
+                else:
+                  $retval = $fstr;
+                endif;                      
+            return $retval;
+        }
 //==============================================================================
    function GetMobileFromDescription($fstr){
               $retval = " - ";
