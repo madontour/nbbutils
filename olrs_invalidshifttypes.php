@@ -86,20 +86,18 @@ The script is designed to be run by cron daily at 16:59
                   . " requires attention as the shift type may not be correct. <br><br> ";
             $msgtxt = $msgtxt . "Regards, <br><br>";
             $msgtxt = $msgtxt . "Steve";
-            echo $msgtxt. '<hr>';
+            //echo $msgtxt. '<hr>';
         
         /* 
          * $msgtxt has the info
          * Now Create and Send Email
          */
  
-         
-       // $mail->addAddress($emailad);              // Add a recipient - ie the shift owner
-       // $mail->addBCC(MAILBCC);                 // Add hidden recipient
-       // $mail->addCC(MAILBCC2);                // Add hidden recipient if defined
-       // $mail->addBCC(MAILBCC3);                // Add hidden recipient if defined
- 
-        $mail->addAddress("michael.thompson@northumbriabloodbikes.org.uk");
+        if(SENDTOUSERS == "no"){
+            $mail->addAddress(MAILTO);
+        } else {
+            $mail->addAddress($emailad);
+        }
         $mail->Subject = MAILSUBJECT;           // Add subject
         $mail->msgHTML($msgtxt);
 
