@@ -46,7 +46,7 @@ The script is designed to be run by cron daily at 16:59
         $dow=date("w");
         $Endday = $da+NUMOFDAYS;
         
-        $TodaySecs=mktime(0, 0, 0, $mo, $da-20, $yr);
+        $TodaySecs=mktime(0, 0, 0, $mo, $da, $yr);
         $EndSecs=mktime(0, 0, 0, $mo, $Endday, $yr);
        
         $conn = new mysqli($DBServer, $DBUser, $DBPass, $DBName);
@@ -95,20 +95,21 @@ The script is designed to be run by cron daily at 16:59
 
         require_once './common/mrbs/mrbs_smtpconnect.inc';    // set defaults for googlemail
                                                 // other CONSTANTS from ini file
-        $mail->addAddress($emailad);              // Add a recipient
+         
+       // $mail->addAddress($emailad);              // Add a recipient - ie the shift owner
        // $mail->addBCC(MAILBCC);                 // Add hidden recipient
        // $mail->addCC(MAILBCC2);                // Add hidden recipient if defined
        // $mail->addBCC(MAILBCC3);                // Add hidden recipient if defined
         
-        
+        $mail->addAddress("michael.thompson@northumbriabloodbikes.org.uk");
         $mail->Subject = MAILSUBJECT;           // Add subject
         $mail->Body    = $msgtxt;
 
-        //if(!$mail->Send()) {
-        //    echo "Mailer Error: " . $mail->ErrorInfo;
-        //} else {
-        //    echo "Message sent!";
-        //}
+        if(!$mail->Send()) {
+            echo "Mailer Error: " . $mail->ErrorInfo;
+        } else {
+            echo "Message sent!  <br>";
+        }
         }
         ?>
     </body>
